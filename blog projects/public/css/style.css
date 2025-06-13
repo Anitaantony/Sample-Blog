@@ -1,0 +1,33 @@
+body {
+  font-family: 'Times New Roman', Times, serif;
+}
+  
+  .nav-link:hover {
+    color: #198754 !important; /* Bootstrap's success green */
+    font-weight: bold;
+  }
+  
+  /* Default green outline */
+.btn-outline-success {
+  border: 2px solid #198754;
+  background-color: transparent;
+  color: #198754;
+}
+
+/* On hover: emphasize the outline (make thicker or glow) */
+.btn-outline-success:hover {
+  border: 3px solid #198754; /* Thicker border on hover */
+  background-color: transparent !important;
+  color: #198754 !important;
+  box-shadow: 0 0 4px #198754; /* Optional: subtle glow effect */
+}
+
+/* Prevent any hover effect on icons */
+.btn-outline-success img {
+  filter: none !important;
+  transition: none !important;
+}
+.btn-outline-success:hover img {
+  filter: none !important;
+}
+

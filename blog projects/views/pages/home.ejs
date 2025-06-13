@@ -1,0 +1,40 @@
+<%- include("../partials/header") %>
+
+<div class="d-flex">
+  <!-- Sidebar Menu -->
+  <%- include("../partials/menu") %>
+
+  <!-- Main Content Area -->
+  <main class="p-4 w-100">
+    <h2 class="mb-4">All Blog Posts</h2>
+
+    <% if (posts.length === 0) { %>
+      <p class="text-muted">No blog posts found. Click "New Post" to add one.</p>
+    <% } else { %>
+      <div class="list-group">
+        <% posts.forEach(post => { %>
+          <a href="/article/<%= post._id %>" class="list-group-item list-group-item-action mb-3 border rounded shadow-sm">
+            <h5 class="mb-1 text-success"><%= post.title %></h5>
+            <p class="mb-1 text-muted">by <%= post.author %></p>
+            <div class="mt-2">
+              <% post.tags.forEach(tag => { %>
+                <span class="badge bg-success-subtle border border-success text-success me-1"><%= tag %></span>
+              <% }) %>
+            </div>            
+            <small class="text-muted">
+              Posted on: <%= new Date(post.createdAt).toLocaleString("en-IN", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+              }) %>
+            </small>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

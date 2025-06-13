@@ -1,0 +1,95 @@
+<%- include("../partials/header") %>
+
+<!-- Quill CSS -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+<div class="d-flex">
+  <%- include("../partials/menu") %>
+
+  <main class="p-4 w-100">
+    <h2 class="mb-4">Write New Post</h2>
+    <form action="/submit-post" method="POST" onsubmit="syncQuillContent()">
+      <div class="mb-3">
+        <label for="author" class="form-label"><strong>Author</strong></label>
+        <input type="text" id="author" name="author" class="form-control" required placeholder="Enter Author Name">
+      </div>
+
+      <div class="mb-3">
+        <label for="title" class="form-label"><strong>Title</strong></label>
+        <input type="text" id="title" name="title" class="form-control" required placeholder="Enter Blog title">
+      </div>
+
+      <div class="mb-3">
+        <label for="tags" class="form-label"><strong>Tags</strong></label>
+        <input type="text" id="tags" name="tags" class="form-control" placeholder="Comma-separated tags">
+      </div>
+
+      <div class="mb-3">
+        <label for="editor" class="form-label"><strong>Post Body</strong></label>
+        <div id="editor" style="height: 300px; background: white;"></div>
+        <input type="hidden" name="body" id="hiddenBody" required>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <button type="reset" class="btn btn-outline-secondary me-2">Cancel</button>
+        <button type="submit" class="btn btn-success">Save Blog Post</button>
+      </div>
+    </form>
+  </main>
+</div>
+
+<!-- Quill JS -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+<script>
+  const quill = new Quill('#editor', {
+    modules: {
+      toolbar: {
+        container: [
+          [{ header: [1, 2, false] }],
+          ['bold', 'italic', 'underline'],
+          ['image', 'code-block']
+        ],
+        handlers: {
+          image: imageHandler
+        }
+      }
+    },
+    placeholder: 'Compose an epic...',
+    theme: 'snow'
+  });
+
+  function imageHandler() {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const res = await fetch('/upload-image', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        const range = quill.getSelection();
+        quill.insertEmbed(range.index, 'image', data.url);
+      } catch (err) {
+        console.error('Image upload failed:', err);
+      }
+    };
+  }
+
+  function syncQuillContent() {
+    const html = quill.root.innerHTML.trim();
+    document.getElementById('hiddenBody').value = html;
+  }
+</script>
+
+<%- include("../partials/footer") %>
